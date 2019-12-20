@@ -23,6 +23,7 @@ class Game : public State {
 
         // Input:
         void leftClick();
+        void rightClick();
     private:
         // Window pointer:
         sf::RenderWindow* window;

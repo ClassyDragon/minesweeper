@@ -12,6 +12,9 @@ class MineSweeper {
         // Default Constructor:
         MineSweeper();
 
+        // Destructor:
+        ~MineSweeper();
+
         // Init Functions:
         void initTextures();
         void initKeys();

@@ -29,3 +29,8 @@ void Game::leftClick() {
     sf::Vector2i mousePos = sf::Mouse::getPosition(*window);
     field.leftClick(mousePos);
 }
+
+void Game::rightClick() {
+    sf::Vector2i mousePos = sf::Mouse::getPosition(*window);
+    field.rightClick(mousePos);
+}

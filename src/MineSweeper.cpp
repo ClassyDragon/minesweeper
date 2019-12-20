@@ -6,11 +6,17 @@ MineSweeper::MineSweeper() {
     initTextures();
 
     // Initialize Window:
-    this->window.create(sf::VideoMode(1000, 1000), "MineSweeper");
+    this->window.create(sf::VideoMode(600, 600), "MineSweeper");
     this->window.setFramerateLimit(20);
 
     // Create Menu:
     this->currentState.push(new Game(&this->window));
+}
+
+// Destructor:
+MineSweeper::~MineSweeper() {
+    delete this->currentState.top();
+    currentState.pop();
 }
 
 // Init Functions:
@@ -58,6 +64,16 @@ void MineSweeper::updateInput() {
     }
     else {
         keyState[Keys::LEFT_CLICK] = KeyState::NOT_PRESSED;
+    }
+    // Right Mouse Click:
+    if (sf::Mouse::isButtonPressed(sf::Mouse::Right)) {
+        if (keyState[Keys::RIGHT_CLICK] == KeyState::NOT_PRESSED) {
+            keyState[Keys::RIGHT_CLICK] = KeyState::PRESSED;
+            currentState.top()->rightClick();
+        }
+    }
+    else {
+        keyState[Keys::RIGHT_CLICK] = KeyState::NOT_PRESSED;
     }
 }
 
