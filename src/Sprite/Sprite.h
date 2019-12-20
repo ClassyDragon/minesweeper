@@ -18,6 +18,7 @@ namespace Sprite {
             void setPosition(sf::Vector2f pos);
             void setScale(sf::Vector2f scale);
             void move(sf::Vector2f offset);
+            sf::FloatRect getGlobalBounds();
         protected:
             sf::RectangleShape image;
             sf::Texture* texture;

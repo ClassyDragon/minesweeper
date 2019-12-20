@@ -36,6 +36,10 @@ void Sprite::sprite::move(sf::Vector2f offset) {
     this->image.move(offset);
 }
 
+sf::FloatRect Sprite::sprite::getGlobalBounds() {
+    return this->image.getGlobalBounds();
+}
+
 
 
 
