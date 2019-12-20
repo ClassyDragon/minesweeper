@@ -2,6 +2,82 @@
 
 // Default Constructor:
 Field::Field() {
+    srand(time(NULL));
+    std::vector<int> hundredNumbers(100);
+    std::vector<int> mineTiles;
+    for (int i = 0; i < 100; i++) {
+        hundredNumbers[i] = i;
+    }
+    while (mineTiles.size() != 15) {
+        int j = rand() % hundredNumbers.size();
+        mineTiles.push_back(hundredNumbers[j]);
+        hundredNumbers.erase(hundredNumbers.begin() + j);
+    }
+    for (unsigned int i = 0; i < mineTiles.size(); i++) {
+        int x = mineTiles[i] % 10;
+        int y = mineTiles[i] / 10;
+        // Add one to adjacent tiles:
+        if (x < 9 && x > 0 && y < 9 && y > 0) {
+            tiles[x - 1][y].incNumAdjacentMines();
+            tiles[x - 1][y - 1].incNumAdjacentMines();
+            tiles[x - 1][y + 1].incNumAdjacentMines();
+            tiles[x + 1][y].incNumAdjacentMines();
+            tiles[x + 1][y - 1].incNumAdjacentMines();
+            tiles[x + 1][y + 1].incNumAdjacentMines();
+            tiles[x][y + 1].incNumAdjacentMines();
+            tiles[x][y - 1].incNumAdjacentMines();
+        }
+        else if (x >= 9 && y < 9 && y > 0) { // Tile is on right edge
+            tiles[x - 1][y].incNumAdjacentMines();
+            tiles[x - 1][y - 1].incNumAdjacentMines();
+            tiles[x - 1][y + 1].incNumAdjacentMines();
+            tiles[x][y + 1].incNumAdjacentMines();
+            tiles[x][y - 1].incNumAdjacentMines();
+        }
+        else if (x <= 0 && y < 9 && y > 0) { // Tile is on left edge
+            tiles[x + 1][y].incNumAdjacentMines();
+            tiles[x + 1][y - 1].incNumAdjacentMines();
+            tiles[x + 1][y + 1].incNumAdjacentMines();
+            tiles[x][y + 1].incNumAdjacentMines();
+            tiles[x][y - 1].incNumAdjacentMines();
+        }
+        else if (y <= 0 && x < 9 && x > 0) { // Tile is on top edge
+            tiles[x - 1][y].incNumAdjacentMines();
+            tiles[x - 1][y + 1].incNumAdjacentMines();
+            tiles[x + 1][y].incNumAdjacentMines();
+            tiles[x + 1][y + 1].incNumAdjacentMines();
+            tiles[x][y + 1].incNumAdjacentMines();
+        }
+        else if (y >= 9 && x < 9 && x > 0) { // Tile is on bottom edge
+            tiles[x - 1][y].incNumAdjacentMines();
+            tiles[x - 1][y - 1].incNumAdjacentMines();
+            tiles[x + 1][y].incNumAdjacentMines();
+            tiles[x + 1][y - 1].incNumAdjacentMines();
+            tiles[x][y - 1].incNumAdjacentMines();
+        }
+        else if (x <= 0 && y <= 0) { // Tile is in top left corner
+            tiles[x + 1][y].incNumAdjacentMines();
+            tiles[x + 1][y + 1].incNumAdjacentMines();
+            tiles[x][y + 1].incNumAdjacentMines();
+        }
+        else if (x <= 0 && y >= 9) { // Tile is in bottom left corner
+            tiles[x + 1][y].incNumAdjacentMines();
+            tiles[x + 1][y - 1].incNumAdjacentMines();
+            tiles[x][y - 1].incNumAdjacentMines();
+        }
+        else if (x >= 9 && y <= 0) { // Tile is in top right corner
+            tiles[x - 1][y].incNumAdjacentMines();
+            tiles[x - 1][y + 1].incNumAdjacentMines();
+            tiles[x][y + 1].incNumAdjacentMines();
+        }
+        else if (x >= 9 && y >= 9) { // Tile is in bottom left corner
+            tiles[x - 1][y].incNumAdjacentMines();
+            tiles[x - 1][y - 1].incNumAdjacentMines();
+            tiles[x][y - 1].incNumAdjacentMines();
+        }
+        tiles[x][y] = Tile(TileType::MINE);
+        mines.push_back(&tiles[x][y]);
+    }
     for (int y = 0; y < nHeight; y++) {
         for (int x = 0; x < nWidth; x++) {
             tiles[x][y].setPosition(sf::Vector2f(
@@ -31,7 +107,83 @@ void Field::drawto(sf::RenderWindow* window) {
 void Field::leftClick(sf::Vector2i mousePos) {
     for (int y = 0; y < nHeight; y++) {
         for (int x = 0; x < nWidth; x++) {
-            tiles[x][y].onClick(mousePos);
+            int tileType = tiles[x][y].onClick(mousePos);
+            switch (tileType) {
+                case TileType::MINE: for (auto& i : mines) {
+                                         i->pow();
+                                     }
+                                     for (int y = 0; y < nHeight; y++) {
+                                         for (int x = 0; x < nWidth; x++) {
+                                             tiles[x][y].reveal();
+                                         }
+                                     }
+                                     break;
+                case TileType::VACANT: revealSurroundingTiles(x, y);
+                                       break;
+                default: break;
+            }
         }
     }
+}
+
+void Field::rightClick(sf::Vector2i mousePos) {
+    for (int y = 0; y < nHeight; y++) {
+        for (int x = 0; x < nWidth; x++) {
+            int tileState = tiles[x][y].onRightClick(mousePos);
+            switch (tileState) {
+                case TileState::HIDDEN: tiles[x][y].flag();
+                                        break;
+                case TileState::REVEALED: break;
+                case TileState::FLAGGED: tiles[x][y].unflag();
+                                        break;
+                default: break;
+            }
+        }
+    }
+}
+
+// Reveal Surrounding Tiles:
+void Field::revealSurroundingTiles(int x, int y) {
+    this->tiles[x][y].reveal();
+    sf::Vector2i current;
+    if (this->tiles[x][y].getNumAdjacentMines() == 0) {
+        std::queue<sf::Vector2i> surrounding;
+        surrounding.push(sf::Vector2i(x + 1, y));
+        surrounding.push(sf::Vector2i(x + 1, y + 1));
+        surrounding.push(sf::Vector2i(x + 1, y - 1));
+        surrounding.push(sf::Vector2i(x - 1, y));
+        surrounding.push(sf::Vector2i(x - 1, y + 1));
+        surrounding.push(sf::Vector2i(x - 1, y - 1));
+        surrounding.push(sf::Vector2i(x, y + 1));
+        surrounding.push(sf::Vector2i(x, y - 1));
+        while (!surrounding.empty()) {
+            current = surrounding.front();
+            if (!isOutOfBounds(current)) {
+                if (this->tiles[current.x][current.y].getState() != TileState::REVEALED) {
+                    this->tiles[current.x][current.y].reveal();
+                    if (this->tiles[current.x][current.y].getNumAdjacentMines() == 0) {
+                        surrounding.push(sf::Vector2i(current.x + 1, current.y));
+                        surrounding.push(sf::Vector2i(current.x + 1, current.y + 1));
+                        surrounding.push(sf::Vector2i(current.x + 1, current.y - 1));
+                        surrounding.push(sf::Vector2i(current.x - 1, current.y));
+                        surrounding.push(sf::Vector2i(current.x - 1, current.y + 1));
+                        surrounding.push(sf::Vector2i(current.x - 1, current.y - 1));
+                        surrounding.push(sf::Vector2i(current.x, current.y + 1));
+                        surrounding.push(sf::Vector2i(current.x, current.y - 1));
+                    }
+                }
+                surrounding.pop();
+            }
+            else {
+                surrounding.pop();
+            }
+        }
+    }
+}
+
+// Check if indicies are out of bounds:
+bool Field::isOutOfBounds(sf::Vector2i indicies) {
+    if (indicies.x > 9 || indicies.x < 0 || indicies.y > 9 || indicies.y < 0)
+        return true;
+    return false;
 }
