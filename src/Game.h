@@ -2,6 +2,7 @@
 #include <SFML/Graphics.hpp>
 #include "State.h"
 #include "Sprite/Sprite.h"
+#include "Field.h"
 
 class Game : public State {
     public:
@@ -25,4 +26,7 @@ class Game : public State {
 
         // Background:
         Sprite::background bg;
+
+        // Field:
+        Field field;
 };

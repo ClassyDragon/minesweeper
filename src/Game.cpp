@@ -16,6 +16,7 @@ void Game::update() {
 // Render:
 void Game::render() {
     this->bg.drawto(window);
+    this->field.drawto(window);
 }
 
 // Get State:
