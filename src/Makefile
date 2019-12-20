@@ -9,7 +9,7 @@ $(EXEC): MineSweeper.o State.o Button.o Game.o Menu.o Sprite.o Animation.o Textu
 source.o: source.cpp MineSweeper.o
 	$(COMP) $< -c $(FLAGS)
 
-MineSweeper.o: MineSweeper.cpp MineSweeper.h State.o Menu.o Game.o
+MineSweeper.o: MineSweeper.cpp MineSweeper.h State.o Menu.o Game.o global.h
 	$(COMP) $< -c $(FLAGS)
 
 State.o: State.cpp State.h
@@ -21,10 +21,10 @@ Button.o: Button.cpp Button.h
 Game.o: Game.cpp Game.h Sprite.o State.o Field.o
 	$(COMP) $< -c $(FLAGS)
 
-Field.o: Field.cpp Field.h Tile.o
+Field.o: Field.cpp Field.h Tile.o global.h
 	$(COMP) $< -c $(FLAGS)
 
-Tile.o: Tile.cpp Tile.h Sprite.o
+Tile.o: Tile.cpp Tile.h Sprite.o global.h
 	$(COMP) $< -c $(FLAGS)
 
 Sprite.o: Sprite/Sprite.cpp Sprite/Sprite.h Sprite/Animation.cpp Sprite/Animation.h TextureManager.o Dbg_Log.o
