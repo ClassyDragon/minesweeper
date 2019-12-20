@@ -13,6 +13,9 @@ class Field {
         // Draw:
         void drawto(sf::RenderWindow* window);
 
+        // Poll a left click:
+        void leftClick(sf::Vector2i mousePos);
+
     private:
         Tile tiles[nWidth][nHeight];
 };

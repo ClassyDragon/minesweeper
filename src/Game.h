@@ -20,6 +20,9 @@ class Game : public State {
 
         // Get State:
         int getState();
+
+        // Input:
+        void leftClick();
     private:
         // Window pointer:
         sf::RenderWindow* window;

@@ -5,6 +5,7 @@
 #include "TextureManager/TextureManager.h"
 #include "Menu.h"
 #include "Game.h"
+#include "global.h"
 
 class MineSweeper {
     public:
@@ -13,6 +14,7 @@ class MineSweeper {
 
         // Init Functions:
         void initTextures();
+        void initKeys();
 
         // Game Loop:
         void startGame();
@@ -20,6 +22,7 @@ class MineSweeper {
         // Updates:
         void update();
         void updateEvent();
+        void updateInput();
 
         // Render:
         void render();
@@ -30,4 +33,7 @@ class MineSweeper {
 
         // Current State:
         std::stack<State*> currentState;
+
+        // Key States:
+        int keyState[numKeys];
 };

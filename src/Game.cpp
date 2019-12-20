@@ -23,3 +23,9 @@ void Game::render() {
 int Game::getState() {
     return 1;
 }
+
+// Input:
+void Game::leftClick() {
+    sf::Vector2i mousePos = sf::Mouse::getPosition(*window);
+    field.leftClick(mousePos);
+}

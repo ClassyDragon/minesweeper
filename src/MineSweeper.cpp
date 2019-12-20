@@ -19,6 +19,12 @@ void MineSweeper::initTextures() {
     TextureManager::load("res/background.png");
 }
 
+void MineSweeper::initKeys() {
+    for (int i = 0; i < numKeys; i++) {
+        keyState[i] = KeyState::NOT_PRESSED;
+    }
+}
+
 // Game Loop:
 void MineSweeper::startGame() {
     while (this->window.isOpen()) {
@@ -30,6 +36,7 @@ void MineSweeper::startGame() {
 // Updates:
 void MineSweeper::update() {
     this->updateEvent();
+    this->updateInput();
     this->currentState.top()->update();
 }
 
@@ -38,6 +45,19 @@ void MineSweeper::updateEvent() {
         if (this->event.type == sf::Event::Closed) {
             this->window.close();
         }
+    }
+}
+
+void MineSweeper::updateInput() {
+    // Left Mouse Click:
+    if (sf::Mouse::isButtonPressed(sf::Mouse::Left)) {
+        if (keyState[Keys::LEFT_CLICK] == KeyState::NOT_PRESSED) {
+            keyState[Keys::LEFT_CLICK] = KeyState::PRESSED;
+            currentState.top()->leftClick();
+        }
+    }
+    else {
+        keyState[Keys::LEFT_CLICK] = KeyState::NOT_PRESSED;
     }
 }
 

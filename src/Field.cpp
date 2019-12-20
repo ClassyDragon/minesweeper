@@ -26,3 +26,12 @@ void Field::drawto(sf::RenderWindow* window) {
         }
     }
 }
+
+// Poll a Left Click:
+void Field::leftClick(sf::Vector2i mousePos) {
+    for (int y = 0; y < nHeight; y++) {
+        for (int x = 0; x < nWidth; x++) {
+            tiles[x][y].onClick(mousePos);
+        }
+    }
+}
