@@ -9,7 +9,7 @@ const int nWidth = 10;
 const int nHeight = 10;
 
 // Number of keys to poll:
-const int numKeys = 1;
+const int numKeys = 2;
 
 enum StateID {
     OVER = 0
@@ -17,7 +17,8 @@ enum StateID {
 
 // Key ID's:
 enum Keys {
-    LEFT_CLICK = 0
+    LEFT_CLICK = 0,
+    RIGHT_CLICK = 1
 };
 
 // State of keyboard key / mouse button:
@@ -30,10 +31,11 @@ enum KeyState {
 enum TileType {
     MINE = 0,
     VACANT = 1
-}
+};
 
 // State of tile:
 enum TileState {
     REVEALED = 0,
-    HIDDEN = 1
-}
+    HIDDEN = 1,
+    FLAGGED = 2
+};
