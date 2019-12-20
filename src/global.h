@@ -5,8 +5,8 @@ const int verticalOffset = 50;
 const int horizontalOffset = 50;
 
 // Field dimensions:
-const int nWidth = 10;
-const int nHeight = 10;
+const int nWidth = 15;
+const int nHeight = 15;
 
 // Number of keys to poll:
 const int numKeys = 2;

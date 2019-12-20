@@ -6,7 +6,7 @@ MineSweeper::MineSweeper() {
     initTextures();
 
     // Initialize Window:
-    this->window.create(sf::VideoMode(600, 600), "MineSweeper");
+    this->window.create(sf::VideoMode(100 + (50 * nWidth), 100 + (50 * nHeight)), "MineSweeper");
     this->window.setFramerateLimit(20);
 
     // Create Menu:
