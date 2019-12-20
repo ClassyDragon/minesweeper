@@ -20,6 +20,7 @@ class Menu : public State {
 
         // Input:
         void leftClick();
+        void rightClick();
     private:
         // Pointer to window:
         sf::RenderWindow* window;

@@ -20,3 +20,6 @@ int Menu::getState() {
 // Input:
 void Menu::leftClick() {
 }
+
+void Menu::rightClick() {
+}
