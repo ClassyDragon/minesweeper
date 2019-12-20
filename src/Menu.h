@@ -17,6 +17,10 @@ class Menu : public State {
 
         // Return State:
         int getState();
+
+        // Input:
+        void leftClick();
+        void rightClick();
     private:
         // Pointer to window:
         sf::RenderWindow* window;

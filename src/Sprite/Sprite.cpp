@@ -24,6 +24,11 @@ void Sprite::sprite::setPosition(sf::Vector2f pos) {
     this->image.setPosition(pos);
 }
 
+void Sprite::sprite::setTextureRect(sf::IntRect rect) {
+    this->image.setSize(sf::Vector2f(rect.width, rect.height));
+    this->image.setTextureRect(rect);
+}
+
 void Sprite::sprite::setScale(sf::Vector2f scale) {
     this->image.setScale(scale);
     float x = scale.x;
@@ -34,6 +39,10 @@ void Sprite::sprite::setScale(sf::Vector2f scale) {
 
 void Sprite::sprite::move(sf::Vector2f offset) {
     this->image.move(offset);
+}
+
+sf::FloatRect Sprite::sprite::getGlobalBounds() {
+    return this->image.getGlobalBounds();
 }
 
 
