@@ -8,7 +8,8 @@ Field::Field() {
     for (int i = 0; i < nWidth * nHeight; i++) {
         hundredNumbers[i] = i;
     }
-    while (mineTiles.size() != 15) {
+    unsigned int numMines = (nWidth * nHeight) / 6;
+    while (mineTiles.size() != numMines) {
         int j = rand() % hundredNumbers.size();
         mineTiles.push_back(hundredNumbers[j]);
         hundredNumbers.erase(hundredNumbers.begin() + j);
@@ -17,66 +18,14 @@ Field::Field() {
         int x = mineTiles[i] % nWidth;
         int y = mineTiles[i] / nHeight;
         // Add one to adjacent tiles:
-        if (x < nWidth - 1 && x > 0 && y < nHeight - 1 && y > 0) {
-            tiles[x - 1][y].incNumAdjacentMines();
-            tiles[x - 1][y - 1].incNumAdjacentMines();
-            tiles[x - 1][y + 1].incNumAdjacentMines();
-            tiles[x + 1][y].incNumAdjacentMines();
-            tiles[x + 1][y - 1].incNumAdjacentMines();
-            tiles[x + 1][y + 1].incNumAdjacentMines();
-            tiles[x][y + 1].incNumAdjacentMines();
-            tiles[x][y - 1].incNumAdjacentMines();
-        }
-        else if (x >= nWidth - 1 && y < nHeight - 1 && y > 0) { // Tile is on right edge
-            tiles[x - 1][y].incNumAdjacentMines();
-            tiles[x - 1][y - 1].incNumAdjacentMines();
-            tiles[x - 1][y + 1].incNumAdjacentMines();
-            tiles[x][y + 1].incNumAdjacentMines();
-            tiles[x][y - 1].incNumAdjacentMines();
-        }
-        else if (x <= 0 && y < nHeight - 1 && y > 0) { // Tile is on left edge
-            tiles[x + 1][y].incNumAdjacentMines();
-            tiles[x + 1][y - 1].incNumAdjacentMines();
-            tiles[x + 1][y + 1].incNumAdjacentMines();
-            tiles[x][y + 1].incNumAdjacentMines();
-            tiles[x][y - 1].incNumAdjacentMines();
-        }
-        else if (y <= 0 && x < nWidth - 1 && x > 0) { // Tile is on top edge
-            tiles[x - 1][y].incNumAdjacentMines();
-            tiles[x - 1][y + 1].incNumAdjacentMines();
-            tiles[x + 1][y].incNumAdjacentMines();
-            tiles[x + 1][y + 1].incNumAdjacentMines();
-            tiles[x][y + 1].incNumAdjacentMines();
-        }
-        else if (y >= nHeight - 1 && x < nWidth - 1 && x > 0) { // Tile is on bottom edge
-            tiles[x - 1][y].incNumAdjacentMines();
-            tiles[x - 1][y - 1].incNumAdjacentMines();
-            tiles[x + 1][y].incNumAdjacentMines();
-            tiles[x + 1][y - 1].incNumAdjacentMines();
-            tiles[x][y - 1].incNumAdjacentMines();
-        }
-        else if (x <= 0 && y <= 0) { // Tile is in top left corner
-            tiles[x + 1][y].incNumAdjacentMines();
-            tiles[x + 1][y + 1].incNumAdjacentMines();
-            tiles[x][y + 1].incNumAdjacentMines();
-        }
-        else if (x <= 0 && y >= nHeight - 1) { // Tile is in bottom left corner
-            tiles[x + 1][y].incNumAdjacentMines();
-            tiles[x + 1][y - 1].incNumAdjacentMines();
-            tiles[x][y - 1].incNumAdjacentMines();
-        }
-        else if (x >= nWidth - 1 && y <= 0) { // Tile is in top right corner
-            tiles[x - 1][y].incNumAdjacentMines();
-            tiles[x - 1][y + 1].incNumAdjacentMines();
-            tiles[x][y + 1].incNumAdjacentMines();
-        }
-        else if (x >= nWidth - 1 && y >= nHeight - 1) { // Tile is in bottom left corner
-            tiles[x - 1][y].incNumAdjacentMines();
-            tiles[x - 1][y - 1].incNumAdjacentMines();
-            tiles[x][y - 1].incNumAdjacentMines();
-        }
-        tiles[x][y] = Tile(TileType::MINE);
-        mines.push_back(&tiles[x][y]);
+        if (!isOutOfBounds(x - 1, y)) tiles[x - 1][y].incNumAdjacentMines();
+        if (!isOutOfBounds(x - 1, y + 1)) tiles[x - 1][y + 1].incNumAdjacentMines();
+        if (!isOutOfBounds(x - 1, y - 1)) tiles[x - 1][y - 1].incNumAdjacentMines();
+        if (!isOutOfBounds(x + 1, y)) tiles[x + 1][y].incNumAdjacentMines();
+        if (!isOutOfBounds(x + 1, y + 1)) tiles[x + 1][y + 1].incNumAdjacentMines();
+        if (!isOutOfBounds(x + 1, y - 1)) tiles[x + 1][y - 1].incNumAdjacentMines();
+        if (!isOutOfBounds(x, y + 1)) tiles[x][y + 1].incNumAdjacentMines();
+        if (!isOutOfBounds(x, y - 1)) tiles[x][y - 1].incNumAdjacentMines();
     }
     for (int y = 0; y < nHeight; y++) {
         for (int x = 0; x < nWidth; x++) {
@@ -109,16 +58,20 @@ void Field::leftClick(sf::Vector2i mousePos) {
         for (int x = 0; x < nWidth; x++) {
             int tileType = tiles[x][y].onClick(mousePos);
             switch (tileType) {
-                case TileType::MINE: for (auto& i : mines) {
-                                         i->pow();
-                                     }
-                                     for (int y = 0; y < nHeight; y++) {
-                                         for (int x = 0; x < nWidth; x++) {
-                                             tiles[x][y].reveal();
+                case TileType::MINE: if (tiles[x][y].getState() == TileState::HIDDEN) {
+                                         for (auto& i : mines) {
+                                             i->pow();
+                                         }
+                                         for (int y = 0; y < nHeight; y++) {
+                                             for (int x = 0; x < nWidth; x++) {
+                                                 tiles[x][y].reveal();
+                                             }
                                          }
                                      }
                                      break;
-                case TileType::VACANT: revealSurroundingTiles(x, y);
+                case TileType::VACANT: if (tiles[x][y].getState() == TileState::HIDDEN) {
+                                           revealSurroundingTiles(x, y);
+                                       }
                                        break;
                 default: break;
             }
@@ -184,6 +137,12 @@ void Field::revealSurroundingTiles(int x, int y) {
 // Check if indicies are out of bounds:
 bool Field::isOutOfBounds(sf::Vector2i indicies) {
     if (indicies.x > nWidth - 1 || indicies.x < 0 || indicies.y > nWidth - 1 || indicies.y < 0)
+        return true;
+    return false;
+}
+
+bool Field::isOutOfBounds(int x, int y) {
+    if (x > nWidth - 1 || x < 0 || y > nWidth - 1 || y < 0)
         return true;
     return false;
 }

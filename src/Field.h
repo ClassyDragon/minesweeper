@@ -26,6 +26,7 @@ class Field {
 
         // Check if indecies are out of bounds:
         bool isOutOfBounds(sf::Vector2i indicies);
+        bool isOutOfBounds(int x, int y);
 
     private:
         Tile tiles[nWidth][nHeight];
