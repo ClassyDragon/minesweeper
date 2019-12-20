@@ -10,5 +10,6 @@ class State {
         virtual void update() = 0;
         virtual void render() = 0;
         virtual int getState() = 0;
+        virtual void leftClick() = 0;
     protected:
 };
