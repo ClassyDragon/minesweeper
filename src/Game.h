@@ -3,6 +3,23 @@
 #include "State.h"
 #include "Sprite/Sprite.h"
 #include "Field.h"
+#include "Button.h"
+
+class Game;
+
+class ResetButton : public Button {
+    public:
+        // Default constructor:
+        ResetButton();
+        ResetButton(Game* game);
+        ~ResetButton();
+
+        // Virtual Overrides:
+        void onClick();
+        void onHover();
+    private:
+        Game* game;
+};
 
 class Game : public State {
     public:
@@ -11,6 +28,9 @@ class Game : public State {
 
         // Constructor:
         Game(sf::RenderWindow* window);
+
+        // Init Functions:
+        void initResetButton();
 
         // Update:
         void update();
@@ -24,6 +44,9 @@ class Game : public State {
         // Input:
         void leftClick();
         void rightClick();
+
+        // Reinitialize field:
+        void reset();
     private:
         // Window pointer:
         sf::RenderWindow* window;
@@ -33,4 +56,7 @@ class Game : public State {
 
         // Field:
         Field field;
+
+        // Reset Button:
+        ResetButton resetButton;
 };

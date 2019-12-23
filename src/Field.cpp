@@ -2,6 +2,17 @@
 
 // Default Constructor:
 Field::Field() {
+    init();
+}
+
+// Destructor:
+Field::~Field() {
+    mines.clear();
+}
+
+// Initialize and reset:
+void Field::init() {
+    isWon = false;
     srand(time(NULL));
     std::vector<int> hundredNumbers(nWidth * nHeight);
     std::vector<int> mineTiles;
@@ -16,7 +27,7 @@ Field::Field() {
     }
     for (unsigned int i = 0; i < mineTiles.size(); i++) {
         int x = mineTiles[i] % nWidth;
-        int y = mineTiles[i] / nHeight;
+        int y = mineTiles[i] / nWidth;
         // Add one to adjacent tiles:
         if (!isOutOfBounds(x - 1, y)) tiles[x - 1][y].incNumAdjacentMines();
         if (!isOutOfBounds(x - 1, y + 1)) tiles[x - 1][y + 1].incNumAdjacentMines();
@@ -26,9 +37,14 @@ Field::Field() {
         if (!isOutOfBounds(x + 1, y - 1)) tiles[x + 1][y - 1].incNumAdjacentMines();
         if (!isOutOfBounds(x, y + 1)) tiles[x][y + 1].incNumAdjacentMines();
         if (!isOutOfBounds(x, y - 1)) tiles[x][y - 1].incNumAdjacentMines();
+        tiles[x][y] = Tile(TileType::MINE);
+        mines.push_back(&tiles[x][y]);
     }
     for (int y = 0; y < nHeight; y++) {
         for (int x = 0; x < nWidth; x++) {
+            if (tiles[x][y].getType() != TileType::MINE) {
+                numbers.push_back(&tiles[x][y]);
+            }
             tiles[x][y].setPosition(sf::Vector2f(
                         horizontalOffset + (50 * x),
                         verticalOffset + (50 * y)
@@ -38,8 +54,36 @@ Field::Field() {
     }
 }
 
+void Field::reset() {
+    mines.clear();
+    numbers.clear();
+    for (int y = 0; y < nHeight; y++) {
+        for (int x = 0; x < nWidth; x++) {
+            tiles[x][y] = Tile();
+        }
+    }
+    init();
+}
+
 // Update:
 void Field::update() {
+}
+
+void Field::checkWinCondition() {
+    bool allNumbersRevealed = true;
+    for (auto& i : this->numbers) {
+        if (i->getState() != TileState::REVEALED) {
+            allNumbersRevealed = false;
+            break;
+        }
+    }
+    if (allNumbersRevealed) {
+        isWon = true;
+    }
+}
+
+bool Field::checkIfWon() {
+    return isWon;
 }
 
 // Draw:
@@ -72,6 +116,7 @@ void Field::leftClick(sf::Vector2i mousePos) {
                 case TileType::VACANT: if (tiles[x][y].getState() == TileState::HIDDEN) {
                                            revealSurroundingTiles(x, y);
                                        }
+                                       checkWinCondition();
                                        break;
                 default: break;
             }
@@ -136,13 +181,13 @@ void Field::revealSurroundingTiles(int x, int y) {
 
 // Check if indicies are out of bounds:
 bool Field::isOutOfBounds(sf::Vector2i indicies) {
-    if (indicies.x > nWidth - 1 || indicies.x < 0 || indicies.y > nWidth - 1 || indicies.y < 0)
+    if (indicies.x > nWidth - 1 || indicies.x < 0 || indicies.y > nHeight - 1 || indicies.y < 0)
         return true;
     return false;
 }
 
 bool Field::isOutOfBounds(int x, int y) {
-    if (x > nWidth - 1 || x < 0 || y > nWidth - 1 || y < 0)
+    if (x > nWidth - 1 || x < 0 || y > nHeight - 1 || y < 0)
         return true;
     return false;
 }

@@ -11,8 +11,17 @@ class Field {
         // Default Constructor:
         Field();
 
+        // Destructor:
+        ~Field();
+
+        // Initialize and reset:
+        void init();
+        void reset();
+
         // Update:
         void update();
+        void checkWinCondition();
+        bool checkIfWon();
 
         // Draw:
         void drawto(sf::RenderWindow* window);
@@ -31,4 +40,6 @@ class Field {
     private:
         Tile tiles[nWidth][nHeight];
         std::vector<Tile*> mines;
+        std::vector<Tile*> numbers;
+        bool isWon;
 };
