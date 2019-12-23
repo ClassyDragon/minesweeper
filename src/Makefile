@@ -18,7 +18,7 @@ State.o: State.cpp State.h
 Button.o: Button.cpp Button.h
 	$(COMP) $< -c $(FLAGS)
 
-Game.o: Game.cpp Game.h Sprite.o State.o Field.o
+Game.o: Game.cpp Game.h Sprite.o State.o Field.o Button.o
 	$(COMP) $< -c $(FLAGS)
 
 Field.o: Field.cpp Field.h Tile.o global.h
