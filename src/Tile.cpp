@@ -64,6 +64,11 @@ int Tile::getState() {
     return this->state;
 }
 
+// Get Tyle Type:
+int Tile::getType() {
+    return this->type;
+}
+
 // Reveal:
 void Tile::reveal() {
     if (this->type != TileType::MINE) {

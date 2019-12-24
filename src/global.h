@@ -1,12 +1,12 @@
 #pragma once
 
 // Screen pixel offset:
-const int verticalOffset = 50;
+const int verticalOffset = 100;
 const int horizontalOffset = 50;
 
 // Field dimensions:
-const int nWidth = 15;
-const int nHeight = 15;
+const int nWidth = 8;
+const int nHeight = 8;
 
 // Number of keys to poll:
 const int numKeys = 2;

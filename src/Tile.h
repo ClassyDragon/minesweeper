@@ -34,6 +34,9 @@ class Tile {
         // Get Current State:
         int getState();
 
+        // Get tile type:
+        int getType();
+
         // Reveal:
         void reveal();
 
